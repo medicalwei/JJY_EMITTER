@@ -2,6 +2,7 @@
 #include <Arduino.h>
 #include <WiFi.h>
 #include <WiFiClient.h>
+#include "esp_sntp.h"
 
 #include "../../.ssid.h"
 /*
@@ -322,27 +323,58 @@ public:
 
 static void start_wifi()
 {
+  // We start by connecting to a WiFi network
+  // To debug, please enable Core Debug Level to Verbose
 
-	WiFi.mode(WIFI_OFF);
-	WiFi.setAutoReconnect(true);
+  Serial.println();
+  Serial.print("[WiFi] Connecting to ");
+  Serial.println(ssid);
+
 	WiFi.mode(WIFI_STA);
 	WiFi.begin(ssid, password);
 
-	Serial.println();
-	Serial.println();
-	Serial.print("Wait for WiFi... ");
-	while (!WiFi.isConnected())
-	{
-		Serial.printf(".");
-		delay(1000);
-	}
+	// Auto reconnect is set true as default
+  // To set auto connect off, use the following function
+  //    WiFi.setAutoReconnect(false);
+
+  // Will try for about 10 seconds (20x 500ms)
+  int tryDelay = 2000;
+  
+  sntp_servermode_dhcp(1);
 	configTzTime(tz, ntp[0], ntp[1], ntp[2]);
+
+  // Wait for the WiFi event
+  while (true) {
+    switch (WiFi.status()) {
+      case WL_NO_SSID_AVAIL: Serial.println("[WiFi] SSID not found"); break;
+      case WL_CONNECT_FAILED:
+        Serial.print("[WiFi] Failed - WiFi not connected! Reason: ");
+        return;
+        break;
+      case WL_CONNECTION_LOST: Serial.println("[WiFi] Connection was lost"); break;
+      case WL_SCAN_COMPLETED:  Serial.println("[WiFi] Scan is completed"); break;
+      case WL_DISCONNECTED:    Serial.println("[WiFi] WiFi is disconnected"); break;
+      case WL_CONNECTED:
+        Serial.println("[WiFi] WiFi is connected!");
+        Serial.print("[WiFi] IP address: ");
+        Serial.println(WiFi.localIP());
+        return;
+        break;
+      default:
+        Serial.print("[WiFi] WiFi Status: ");
+        Serial.println(WiFi.status());
+        break;
+    }
+    delay(tryDelay);
+  }
 
 }
 
 void setup()
 {
 	Serial.begin(115200);
+
+	delay(10);
 
 	start_wifi();
 
