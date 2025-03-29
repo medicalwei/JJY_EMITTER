@@ -16,10 +16,10 @@ const char* ntp[] = {"0.pool.ntp.org", "1.pool.ntp.org", "2.pool.ntp.org"}; // N
 
 */
 
-#define JJY_40k_OUTPUT_PIN 23 // 40kHzコードを出力するピン(-1 = 使わない場合)
-#define JJY_60k_OUTPUT_PIN 22 // 60kHzコードを出力するピン(-1 = 使わない場合)
-#define JJY_CODE_NONINVERTED_OUTPUT_PIN 2  // 無変調のタイムコードを正論理で出力するピン(-1 = 使わない場合)
-#define JJY_CODE_INVERTED_OUTPUT_PIN 15 // 無変調のタイムコードを負論理で出力するピン(-1 = 使わない場合)
+#define JJY_40k_OUTPUT_PIN 23			  // 40kHzコードを出力するピン(-1 = 使わない場合)
+#define JJY_60k_OUTPUT_PIN 22			  // 60kHzコードを出力するピン(-1 = 使わない場合)
+#define JJY_CODE_NONINVERTED_OUTPUT_PIN 2 // 無変調のタイムコードを正論理で出力するピン(-1 = 使わない場合)
+#define JJY_CODE_INVERTED_OUTPUT_PIN 15	  // 無変調のタイムコードを負論理で出力するピン(-1 = 使わない場合)
 
 #define LEDC_40k_CHANNEL 0	   // LEDCの40kHz用チャネル
 #define LEDC_60k_CHANNEL 10	   // LEDCの60kHz用チャネル
@@ -344,16 +344,26 @@ static void start_wifi()
 	configTzTime(tz, ntp[0], ntp[1], ntp[2]);
 
   // Wait for the WiFi event
-  while (true) {
-    switch (WiFi.status()) {
-      case WL_NO_SSID_AVAIL: Serial.println("[WiFi] SSID not found"); break;
+	while (true)
+	{
+		switch (WiFi.status())
+		{
+		case WL_NO_SSID_AVAIL:
+			Serial.println("[WiFi] SSID not found");
+			break;
       case WL_CONNECT_FAILED:
         Serial.print("[WiFi] Failed - WiFi not connected! Reason: ");
         return;
         break;
-      case WL_CONNECTION_LOST: Serial.println("[WiFi] Connection was lost"); break;
-      case WL_SCAN_COMPLETED:  Serial.println("[WiFi] Scan is completed"); break;
-      case WL_DISCONNECTED:    Serial.println("[WiFi] WiFi is disconnected"); break;
+		case WL_CONNECTION_LOST:
+			Serial.println("[WiFi] Connection was lost");
+			break;
+		case WL_SCAN_COMPLETED:
+			Serial.println("[WiFi] Scan is completed");
+			break;
+		case WL_DISCONNECTED:
+			Serial.println("[WiFi] WiFi is disconnected");
+			break;
       case WL_CONNECTED:
         Serial.println("[WiFi] WiFi is connected!");
         Serial.print("[WiFi] IP address: ");
@@ -367,7 +377,6 @@ static void start_wifi()
     }
     delay(tryDelay);
   }
-
 }
 
 void setup()
@@ -406,7 +415,8 @@ void loop()
 	t = time(&t);
 	struct tm *tm = localtime(&t);
 	bool date_valid = true;
-	if(tm->tm_year + 1900 < 2000) date_valid = false; // おそらくまだ NTPの取得ができていない
+	if (tm->tm_year + 1900 < 2000)
+		date_valid = false; // おそらくまだ NTPの取得ができていない
 	if (last_min != tm->tm_min && tm->tm_sec == 0)
 	{
 		// 分の変わり目。1分ぶんのタイムコードを作成する。
@@ -468,7 +478,7 @@ void loop()
 		if (on != last_on_state)
 		{
 			last_on_state = on;
-			if(date_valid && gen.valid)
+			if (date_valid && gen.valid)
 			{
 				// 正常に時刻を取得できている場合のみに出力を行う
 				if (on)
