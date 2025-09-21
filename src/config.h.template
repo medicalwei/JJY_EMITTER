@@ -1,0 +1,28 @@
+#ifndef CONFIG_H
+#define CONFIG_H
+
+// Configuration
+// Copy this file to config.h and fill in your settings
+
+const char *ssid = "YOUR_WIFI_SSID";         // WiFi access point SSID
+const char *password = "YOUR_WIFI_PASSWORD"; // WiFi access point password
+const char *tz = "CST-8";                    // Timezone (examples: JST-9, CST-8, EST5EDT, PST8PDT)
+
+// NTP servers
+const char *ntp[] = {
+    "pool.ntp.org",
+    "time.google.com",
+    "time.cloudflare.com"
+};
+
+#define JJY_40k_OUTPUT_PIN 23			  // Pin for 40kHz signal output (-1 = disabled)
+#define JJY_60k_OUTPUT_PIN 22			  // Pin for 60kHz signal output (-1 = disabled)
+#define JJY_CODE_NONINVERTED_OUTPUT_PIN 2 // Pin for unmodulated time code positive logic output (-1 = disabled)
+#define JJY_CODE_INVERTED_OUTPUT_PIN 15	  // Pin for unmodulated time code negative logic output (-1 = disabled)
+
+#define LEDC_40k_CHANNEL 0	   // LEDC channel for 40kHz signal
+#define LEDC_60k_CHANNEL 10	   // LEDC channel for 60kHz signal
+#define LEDC_RESOLUTION_BITS 1 // LEDC resolution in bits
+
+
+#endif
